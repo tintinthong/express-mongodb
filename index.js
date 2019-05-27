@@ -77,7 +77,7 @@ app.post('/postFile', (req, res) => {
     // });
     
     var bucket = new mongodb.GridFSBucket(db);
-    fs.createReadStream('./somevideo.mp4')
+    fs.createReadStream('./upload/somevideo.mp4')
     .pipe(bucket.openUploadStream('video.mp4'))
     .on('error', function(error) {
         assert.ifError(error);
@@ -97,7 +97,7 @@ app.get('/getFile', function(req,res){
     
     var bucket = new mongodb.GridFSBucket(db);
     bucket.openDownloadStreamByName('video.mp4').
-    pipe(fs.createWriteStream('./output.mp4')).
+    pipe(fs.createWriteStream('./download/output.mp4')).
     on('error', function(error) {
         assert.ifError(error);
     }).
