@@ -48,7 +48,6 @@ client.connect(err => {
     }
     db= client.db("Cluster0");
 
-    app.listen(port, ()=> console.log(`Example app listening on port ${port}!`))
     
     
 })
@@ -111,6 +110,8 @@ app.get('/getFile', function(req,res){
     
 });
 
+
+app.listen(port, ()=> console.log(`Example app listening on port ${port}!`))
 
 
 //https://stackoverflow.com/questions/30985596/issue-with-downloading-a-file-from-gridfs-in-mongodb-nodejs-gridfs-stack
