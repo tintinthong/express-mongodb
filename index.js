@@ -1,16 +1,8 @@
 const express = require('express');
 const app = express();
 var fs=require('fs');
-var assert = require('assert');
 var path = require("path");
-// const cors = require("cors");
-
-//connect  to db
-let db;
-
-
-// const MongoClient = require('mongodb').MongoClient;
-
+var cors= require("cors");
 const port=8080; 
 // funny when using port 8080 it works
 // when . using port 5501 it doesn't work. 
@@ -19,16 +11,48 @@ const mongodb= require('mongodb');
 const MongoClient = mongodb.MongoClient;
 const uri = "mongodb+srv://tintinthong:H-i5JBrKh-Xp3%21-@cluster0-duqpt.mongodb.net/test?retryWrites=true";
 const client = new MongoClient(uri, { useNewUrlParser: true });
+
+// //handle cross origin requiues
+// function handleCors(req, res, callback) {
+
+//     res.setHeader('Access-Control-Allow-Origin', '*')
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE,OPTIONS');
+//     res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+
+//     // CORS OPTIONS request, simply return 200
+//     if (req.method == 'OPTIONS') {
+//         res.statusCode = 200;
+//         res.end();
+//         callback.onOptions();
+//         return;
+//     }
+
+//     callback.onContinue();
+// };
+
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*'); // * => allow all origins
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,OPTIONS,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token, Accept'); // add remove headers according to your needs
+    next()
+})
+
+// app.use(cors())
+
+//connect  to db
+let db;
+
 client.connect(err => {
     if(err) {
         console.log('Error occurred while connecting to MongoDB Atlas...\n',err);
     }
     db= client.db("Cluster0");
-    
-    
+
     app.listen(port, ()=> console.log(`Example app listening on port ${port}!`))
     
+    
 })
+
 
 
 app.get('/', function(req, res) {
@@ -37,8 +61,10 @@ app.get('/', function(req, res) {
 });
 
 app.post('/postFile', (req, res) => {
-    const click = {clickTime: new Date()};
     
+    
+    
+    // const click = {clickTime: new Date()};
     // console.log(click);
     // console.log(db);
     
@@ -59,7 +85,7 @@ app.post('/postFile', (req, res) => {
     .on('finish', function() {
         console.log('done!');
         res.sendStatus(201);
-        process.exit(0);
+        // process.exit(0);
     }); 
     
     
@@ -67,6 +93,7 @@ app.post('/postFile', (req, res) => {
 
 
 app.get('/getFile', function(req,res){
+    
     
     var bucket = new mongodb.GridFSBucket(db);
     bucket.openDownloadStreamByName('video.mp4').
@@ -77,12 +104,16 @@ app.get('/getFile', function(req,res){
     on('finish', function() {
         console.log('done!');
         res.sendStatus(201);
-        process.exit(0);
+  
+        // process.exit(0);
     });
     
     
 });
 
+
+
+//https://stackoverflow.com/questions/30985596/issue-with-downloading-a-file-from-gridfs-in-mongodb-nodejs-gridfs-stack
 
 
 
