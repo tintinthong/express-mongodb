@@ -3,6 +3,7 @@ const app = express();
 var fs=require('fs');
 var path = require("path");
 var cors= require("cors");
+var request=require("request") // to use browser and download?
 const port=8080; 
 // funny when using port 8080 it works
 // when . using port 5501 it doesn't work. 
@@ -47,7 +48,7 @@ client.connect(err => {
         console.log('Error occurred while connecting to MongoDB Atlas...\n',err);
     }
     db= client.db("Cluster0");
-
+    
     
     
 })
@@ -75,17 +76,17 @@ app.post('/postFile', (req, res) => {
     //     res.sendStatus(201);
     // });
     
-    var bucket = new mongodb.GridFSBucket(db);
+    let stream = bucket = new mongodb.GridFSBucket(db);
     fs.createReadStream('./upload/somevideo.mp4')
     .pipe(bucket.openUploadStream('video.mp4'))
     .on('error', function(error) {
         assert.ifError(error);
     })
     .on('finish', function() {
-        console.log('done!');
+        console.log('done!  resource  downloaded to server');
         res.sendStatus(201);
         // process.exit(0);
-    }); 
+    });
     
     
 });
@@ -95,17 +96,47 @@ app.get('/getFile', function(req,res){
     
     
     var bucket = new mongodb.GridFSBucket(db);
-    bucket.openDownloadStreamByName('video.mp4').
+    let stream = bucket.openDownloadStreamByName('video.mp4').
     pipe(fs.createWriteStream('./download/output.mp4')).
     on('error', function(error) {
         assert.ifError(error);
     }).
     on('finish', function() {
         console.log('done!');
+      
+        let pathToFile =path.join(__dirname, 'output.mp4')
+        res.sendFile(pathToFile);
         res.sendStatus(201);
-  
         // process.exit(0);
     });
+
+    // //send  stream 
+    // res.send(stream).on('finish',function(){
+    //     res.end('ended')
+    // });
+    //https://stackoverflow.com/questions/25463423/res-sendfile-absolute-path
+
+
+    
+    
+});
+
+app.get('/downloadFile', function(req,res){
+    
+    const file = `${__dirname}/upload/somevideo.mp4`;
+    res.download(file, ()=>{
+        console.log("file downloaded")
+    });
+    
+    var fileContents = Buffer.from(fileData, "base64");
+    
+    var readStream = new stream.PassThrough();
+    readStream.end(fileContents);
+    
+    response.set('Content-disposition', 'attachment; filename=' + fileName);
+    response.set('Content-Type', 'text/plain');
+    
+    readStream.pipe(res);
     
     
 });
@@ -113,7 +144,8 @@ app.get('/getFile', function(req,res){
 
 app.listen(port, ()=> console.log(`Example app listening on port ${port}!`))
 
-
+//https://stackoverflow.com/questions/45812943/how-to-stream-from-nodejs-server-to-client
+//https://stackoverflow.com/questions/45922074/node-express-js-download-file-from-memory-filename-must-be-a-string
 //https://stackoverflow.com/questions/30985596/issue-with-downloading-a-file-from-gridfs-in-mongodb-nodejs-gridfs-stack
 
 

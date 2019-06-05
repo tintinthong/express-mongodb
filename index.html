@@ -8,10 +8,12 @@
 </head>
 <body>
     
-    <button id="getFile"  method="get" action="/getFile" >GET FILE</button> 
-    <button id="postFile" method="post" action="/postFile">POST FILE</button>
     
-
+    <button id="postFile" method="post" action="/postFile">POST FILE</button>
+    <button id="getFile"  method="get" action="/getFile" >GET FILE</button>
+    <!-- <button id="downloadFile"  method="get" action="/downloadFile" >DOWNLOAD FILE</button>   -->
+    <a href="/download/output.mp4" target="_blank" download="output.mp4">Download</a>
+    
     <script>
         const buttonPost = document.getElementById('postFile');
         buttonPost.addEventListener('click', function(e) {
@@ -46,13 +48,27 @@
             });
         }); 
         
-        
-        
-    </script>
-</body>
-
-
-
-
-
-</html>
+        // const buttonDownload = document.getElementById('downloadFile');
+        // buttonDownload.addEventListener('click', function(e) {
+            //     console.log('download button was clicked');
+            //     fetch('/downloadFile', {method: 'GET'})
+            //     .then(function(response) {
+                //         if(response.ok) {
+                    //             console.log('Click was recorded');
+                    //             return;
+                    //         }
+                    //         throw new Error('Request failed.');
+                    //     })
+                    //     .catch(function(error) {
+                        //         console.log(error);
+                        //     });
+                        // });  
+                        
+                    </script>
+                </body>
+                
+                
+                
+                
+                
+                </html>
