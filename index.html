@@ -7,11 +7,7 @@
     <title>Express + Mongo</title>
   </head>
   <body>
-    <form
-      method="post"
-      enctype="multipart/form-data"
-      action="/postFile"
-    >
+    <form method="post" enctype="multipart/form-data" action="/postFile2">
       <input type="file" name="avatar" />
       <input type="submit" value="Submit" />
       <!-- <div>
@@ -66,16 +62,29 @@
       buttonGet.addEventListener("click", function(e) {
         console.log("get button was clicked");
         fetch("/getFile", { method: "GET" })
-          .then(function(response) {
-            if (response.ok) {
-              console.log("Click was recorded");
-              return;
-            }
-            throw new Error("Request failed.");
-          })
-          .catch(function(error) {
-            console.log(error);
+          .then(response => response.blob())
+          .then(blob => {
+            console.log(blob);
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "filename.mp4";
+            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            a.click();
+            a.remove(); //afterwards we remove the element again
           });
+
+        //   .then(function(response) {
+        //       console.log(response)
+        //     if (response.ok) {
+        //       console.log("Click was recorded");
+        //       return;
+        //     }
+        //     throw new Error("Request failed.");
+        //   })
+        //   .catch(function(error) {
+        //     console.log(error);
+        //   });
       });
 
       // const buttonDownload = document.getElementById('downloadFile');

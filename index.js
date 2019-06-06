@@ -5,8 +5,7 @@ var path = require("path");
 var cors = require("cors");
 var request = require("request"); // to use browser and download?
 
-var multer = require("multer");
-var upload = multer({ dest: "uploads/" });
+var Busboy = require("busboy");
 
 const port = 8080;
 // funny when using port 8080 it works
@@ -58,23 +57,56 @@ client.connect(err => {
   db = client.db("Cluster0");
 });
 
-app.get("/", function(req, res) {
+app.get("/", function(req, res, bucket) {
   res.sendFile(path.join(__dirname + "/index.html"));
 });
 
-app.get("/hey", (req, res) => {
+app.get("/hey", (req, res, bucket) => {
   res.send("HEYYY");
 });
-app.post("/postFile2", upload.single("avatar"), (req, res) => {
-  console.log("CREATING");
-  console.log(req.file);
-  //   console.log("the data is received");
-  //   res.json({ test: "haaa" });
+
+app.get("/myFile", (req, res) => {
+  let pathToFile = path.join(__dirname, "output.mp4");
+  console.log(pathToFile);
+  res.download(pathToFile);
 });
 
-app.get("/postFile2", (req, res) => {
-  console.log("GETTING POST FILE 2");
-  res.send("Heyy");
+app.post("/postFile2", (req, res, bucket) => {
+  var bucket = new mongodb.GridFSBucket(db);
+  console.log("bucket", bucket);
+  console.log(req.headers);
+  const busboy = new Busboy({ headers: req.headers });
+  req.pipe(busboy);
+  busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
+    console.log("FILENAME: ", filename);
+    file
+      .pipe(bucket.openUploadStream(filename))
+      .on("error", err => {
+        console.error("ERROR: ", err);
+      })
+      .on("finish", () => {
+        console.log("DONE");
+      });
+  });
+
+  //     file.on("data", data => {
+  //       data.pipe(bucket.openUploadStream("file101"));
+  //       console.log("DATA");
+  //       console.log(data);
+  //     });
+  //     // Completed streaming the file.
+  //     file.on("end", function() {
+  //       console.log("Finished with " + fieldname);
+  //     });
+  //   });
+  // Listen for event when Busboy is finished parsing the form.
+  busboy.on("finish", function() {
+    res.statusCode = 200;
+    res.send("BOOO");
+    res.end();
+  });
+
+  // Pipe the HTTP Request into Busboy.
 });
 
 app.post("/postFile", (req, res) => {
@@ -104,28 +136,38 @@ app.post("/postFile", (req, res) => {
 });
 
 app.get("/getFile", function(req, res) {
-  var bucket = new mongodb.GridFSBucket(db);
-  let stream = bucket
-    .openDownloadStreamByName("video.mp4")
-    .pipe(fs.createWriteStream("./download/output.mp4"))
-    .on("error", function(error) {
-      assert.ifError(error);
-    })
-    .on("finish", function() {
-      console.log("done!");
-
-      let pathToFile = path.join(__dirname, "output.mp4");
-      res.sendFile(pathToFile);
-      res.sendStatus(201);
-      // process.exit(0);
-    });
-
-  // //send  stream
-  // res.send(stream).on('finish',function(){
-  //     res.end('ended')
-  // });
-  //https://stackoverflow.com/questions/25463423/res-sendfile-absolute-path
+  console.log(req.headers);
+  let pathToFile = path.join(__dirname, "output.mp4");
+  console.log(pathToFile);
+  res.download(pathToFile);
 });
+//   const file = `${__dirname}/upload/somevideo.mp4`;
+//   res.download(file, () => {
+//     console.log("file downloaded");
+//   });
+
+//   var bucket = new mongodb.GridFSBucket(db);
+//   let stream = bucket
+//     .openDownloadStreamByName("video.mp4")
+//     .pipe(fs.createWriteStream("./download/output.mp4"))
+//     .on("error", function(error) {
+//       assert.ifError(error);
+//     })
+//     .on("finish", function() {
+//       console.log("done!");
+
+//       let pathToFile = path.join(__dirname, "output.mp4");
+//       res.sendFile(pathToFile);
+//       res.sendStatus(201);
+//       // process.exit(0);
+//     });
+
+// //send  stream
+// res.send(stream).on('finish',function(){
+//     res.end('ended')
+// });
+//https://stackoverflow.com/questions/25463423/res-sendfile-absolute-path
+// });
 
 app.get("/downloadFile", function(req, res) {
   const file = `${__dirname}/upload/somevideo.mp4`;
@@ -133,15 +175,15 @@ app.get("/downloadFile", function(req, res) {
     console.log("file downloaded");
   });
 
-  var fileContents = Buffer.from(fileData, "base64");
+  //   var fileContents = Buffer.from(fileData, "base64");
 
-  var readStream = new stream.PassThrough();
-  readStream.end(fileContents);
+  //   var readStream = new stream.PassThrough();
+  //   readStream.end(fileContents);
 
-  response.set("Content-disposition", "attachment; filename=" + fileName);
-  response.set("Content-Type", "text/plain");
+  //   response.set("Content-disposition", "attachment; filename=" + fileName);
+  //   response.set("Content-Type", "text/plain");
 
-  readStream.pipe(res);
+  //   readStream.pipe(res);
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
