@@ -71,8 +71,6 @@ app.get("/myFile", (req, res) => {
   res.download(pathToFile);
 });
 
-<<<<<<< HEAD
-=======
 app.post("/postFile2", (req, res, bucket) => {
   var bucket = new mongodb.GridFSBucket(db);
   console.log("bucket", bucket);
@@ -109,7 +107,6 @@ app.post("/postFile2", (req, res, bucket) => {
   });
 
   // Pipe the HTTP Request into Busboy.
->>>>>>> feat/file-streaming
 });
 
 app.post("/postFile", (req, res) => {
