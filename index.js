@@ -117,8 +117,6 @@ app.get('/getFile', function(req,res){
     //https://stackoverflow.com/questions/25463423/res-sendfile-absolute-path
 
 
-    
-    
 });
 
 app.get('/downloadFile', function(req,res){
