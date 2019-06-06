@@ -1,74 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Express + Mongo</title>
-</head>
-<body>
-    
-    
+  </head>
+  <body>
+    <form
+      method="post"
+      enctype="multipart/form-data"
+      action="/postFile"
+    >
+      <input type="file" name="avatar" />
+      <input type="submit" value="Submit" />
+      <!-- <div>
+        <label for="file">Choose file to upload</label>
+        <input type="file" id="file" name="file" multiple />
+      </div>
+      <div>
+        <button type="submit" formenctype="multipart/form-data">
+          Submit
+        </button>
+      </div> -->
+    </form>
+
     <button id="postFile" method="post" action="/postFile">POST FILE</button>
-    <button id="getFile"  method="get" action="/getFile" >GET FILE</button>
+    <button id="getFile" method="get" action="/getFile">GET FILE</button>
     <!-- <button id="downloadFile"  method="get" action="/downloadFile" >DOWNLOAD FILE</button>   -->
-    <a href="/download/output.mp4" target="_blank" download="output.mp4">Download</a>
-    
+    <a href="/download/output.mp4" target="_blank" download="output.mp4"
+      >Download</a
+    >
+
     <script>
-        const buttonPost = document.getElementById('postFile');
-        buttonPost.addEventListener('click', function(e) {
-            console.log('post button was clicked');
-            
-            fetch('/postFile', {method: 'POST'})
-            .then(function(response) {
-                if(response.ok) {
-                    console.log('Click was recorded');
-                    return;
-                }
-                throw new Error('Request failed.');
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
-        });
-        
-        const buttonGet = document.getElementById('getFile');
-        buttonGet.addEventListener('click', function(e) {
-            console.log('get button was clicked');
-            fetch('/getFile', {method: 'GET'})
-            .then(function(response) {
-                if(response.ok) {
-                    console.log('Click was recorded');
-                    return;
-                }
-                throw new Error('Request failed.');
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
-        }); 
-        
-        // const buttonDownload = document.getElementById('downloadFile');
-        // buttonDownload.addEventListener('click', function(e) {
-            //     console.log('download button was clicked');
-            //     fetch('/downloadFile', {method: 'GET'})
-            //     .then(function(response) {
-                //         if(response.ok) {
-                    //             console.log('Click was recorded');
-                    //             return;
-                    //         }
-                    //         throw new Error('Request failed.');
-                    //     })
-                    //     .catch(function(error) {
-                        //         console.log(error);
-                        //     });
-                        // });  
-                        
-                    </script>
-                </body>
-                
-                
-                
-                
-                
-                </html>
+      //   fetch("http://localhost:8081/postFile2", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json"
+      //     },
+      //     body: JSON.stringify({
+      //       user: {
+      //         name: "John",
+      //         email: "john@example.com"
+      //       }
+      //     })
+      //   });
+      const buttonPost = document.getElementById("postFile");
+      buttonPost.addEventListener("click", function(e) {
+        console.log("post button was clicked");
+
+        fetch("/postFile", { method: "POST" })
+          .then(function(response) {
+            if (response.ok) {
+              console.log("Click was recorded");
+              return;
+            }
+            throw new Error("Request failed.");
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
+
+      const buttonGet = document.getElementById("getFile");
+      buttonGet.addEventListener("click", function(e) {
+        console.log("get button was clicked");
+        fetch("/getFile", { method: "GET" })
+          .then(function(response) {
+            if (response.ok) {
+              console.log("Click was recorded");
+              return;
+            }
+            throw new Error("Request failed.");
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
+
+      // const buttonDownload = document.getElementById('downloadFile');
+      // buttonDownload.addEventListener('click', function(e) {
+      //     console.log('download button was clicked');
+      //     fetch('/downloadFile', {method: 'GET'})
+      //     .then(function(response) {
+      //         if(response.ok) {
+      //             console.log('Click was recorded');
+      //             return;
+      //         }
+      //         throw new Error('Request failed.');
+      //     })
+      //     .catch(function(error) {
+      //         console.log(error);
+      //     });
+      // });
+    </script>
+  </body>
+</html>
