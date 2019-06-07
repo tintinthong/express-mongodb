@@ -1,0 +1,27 @@
+type Query {
+    listFiles: [FileObject]
+    downloadFileById(id: ID): FileObject
+    queryFilesByName(name: String): [FileObject]
+}
+type Mutations {
+    uploadSingleFile(file: FileObject)
+}
+
+type FileObject {
+    id: ID
+    fileName: String 
+    fileSize: Integer
+    fileType: FileTypes
+}
+
+enum FileTypes {
+    MP4
+    MP3
+    WAV
+    TXT
+    DOC
+    PPT
+    XLSX
+    XLS
+    XLX
+}

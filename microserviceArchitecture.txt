@@ -1,0 +1,13 @@
+Microservice Parameters
+1. MongoDB Payload
+    a. uri
+    b. secretKeys
+2. Specify access ports. Default all will be closed
+    a. Main data pipeline (I/O)
+    b. container to container communication (bus)
+    c. Logging ports
+3. Logs
+    a. What to log
+        a. ERROR
+        b. GENERAL 
+        c. VERBOSE
